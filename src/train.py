@@ -149,7 +149,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     )
     class_names = train_dataset.classes
 
-    model = build_model(model_name, len(class_names), device=device, img_size=img_size, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_features=freeze_features, unfreeze_last_n_layers=unfreeze_last_n_layers).to(device)    
+    model = build_model(model_name, len(class_names), device=device, img_size=img_size, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_features=freeze_features, unfreeze_last_n_layers=unfreeze_last_n_layers)
 
     display_class_distribution("Train", train_dataset, class_names)
     display_class_distribution("Test", test_dataset, class_names)
@@ -165,7 +165,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
 
         pbar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{max_epochs}", unit="batch")
         for x, y in pbar:
-            x, y = x.to(device, non_blocking=is_cuda), y.to(device, non_blocking=is_cuda)
+            x, y = x.to(device), y.to(device)
             optimizer.zero_grad(set_to_none=True)
             logits = model(x)
             loss = loss_fn(logits, y)

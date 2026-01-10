@@ -71,11 +71,8 @@ class VGG16(nn.Module):
         )
 
         feat_size = img_size // 32
-        if feat_size > 1:
-            self.avgpool = nn.AdaptiveAvgPool2d((feat_size, feat_size))
-        else:
-            self.avgpool = nn.Identity()
-
+        self.avgpool = nn.AdaptiveAvgPool2d((feat_size, feat_size))
+        
         in_features = 512 * feat_size * feat_size
 
         self.classifier = nn.Sequential(
