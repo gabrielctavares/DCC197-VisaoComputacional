@@ -8,9 +8,11 @@ EXPERIMENTS_PART2_FILE = "experiments/experiments_part2.json"
 def run_experiment(exp):
     cmd = [
         "python", "src/train.py",
+        "--id", exp["id"],
         "--model_name", exp["model_name"],
         "--epochs", str(exp["epochs"]),
-        "--batch_size", str(exp["batch_size"]),
+        "--batch_size", str(exp["batch_size"]),        
+        "--img_size", str(exp["img_size"]),
         "--learning_rate", str(exp["learning_rate"]),
         "--weight_decay", str(exp["weight_decay"]),
         "--results_file", f"results_{datetime.now().strftime('%Y%m%d')}.xlsx"
@@ -30,7 +32,7 @@ def run_experiment(exp):
         cmd += ["--freeze_features", "True"]
         cmd += ["--unfreeze_last_n_layers", str(exp.get("unfreeze_last_n_layers", 0))]
 
-    print("\n▶ Executando experimento:", exp["name"])
+    print("\n▶ Executando experimento:", exp["id"])
     subprocess.run(cmd, check=True)
 
 

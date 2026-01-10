@@ -221,6 +221,7 @@ def main(model_name, max_epochs, batch_size, img_size, learning_rate, weight_dec
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--id", type=str, default="experiment_1")
     parser.add_argument("--model_name", type=str, default='VGG16')
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch_size", type=int, default=32)
