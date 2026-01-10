@@ -71,7 +71,7 @@ def validate(model, dataloader, device, class_names):
     return acc, class_accs, cm
 
 
-def main(model_name, max_epochs, batch_size, img_size, learning_rate, weight_decay, use_dropout, dropout_rate, use_batch_norm, use_data_augmentation, freeze_features, unfreeze_last_n_layers, results_file="resultados.xlsx"):
+def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight_decay, use_dropout, dropout_rate, use_batch_norm, use_data_augmentation, freeze_features, unfreeze_last_n_layers, results_file="resultados.xlsx"):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     is_cuda = device.type == 'cuda'
     num_workers=4
@@ -79,7 +79,7 @@ def main(model_name, max_epochs, batch_size, img_size, learning_rate, weight_dec
 
     base_folder = os.path.dirname(os.path.abspath(__file__))
     output_model_path = os.path.join(base_folder, 'results')
-    output_model_folder = os.path.join(output_model_path, f"{model_name}")
+    output_model_folder = os.path.join(output_model_path, f"{id}")
     os.makedirs(output_model_folder, exist_ok=True)
 
     logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(asctime)s - %(message)s', handlers=[
@@ -89,7 +89,7 @@ def main(model_name, max_epochs, batch_size, img_size, learning_rate, weight_dec
     
     writer = SummaryWriter(log_dir=os.path.join(output_model_folder, "tensorboard"))
 
-    logging.info(f"Starting training using {model_name} model, max epochs {max_epochs}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_features}, unfreeze last n layers {unfreeze_last_n_layers}.")
+    logging.info(f"Starting training {id} using {model_name} model, max epochs {max_epochs}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_features}, unfreeze last n layers {unfreeze_last_n_layers}.")
 
     transform_list = [transforms.Resize((img_size, img_size))]
     if use_data_augmentation:
@@ -201,6 +201,7 @@ def main(model_name, max_epochs, batch_size, img_size, learning_rate, weight_dec
 
     
     final_row = {
+        "id": id,
         "modelo": model_name,
         "test_acc": final_test_acc,
         **{f"test_{class_names[i]}": test_class_accs[i] for i in class_names},
@@ -240,7 +241,7 @@ if __name__ == "__main__":
 
     parser.add_argument("-r", "--results_file", type=str, default=f"resultados_{datetime.now().strftime('%Y%m%d')}.xlsx")
     args = parser.parse_args()
-    main(args.model_name, args.epochs, args.batch_size, 
+    main(args.id, args.model_name, args.epochs, args.batch_size, 
          args.img_size, 
          args.learning_rate, args.weight_decay,
          args.use_dropout, args.dropout_rate, args.use_batch_norm,
