@@ -80,13 +80,10 @@ class VGG16(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features, 4096),
+            nn.Linear(in_features, 512),
             nn.ReLU(True),
             nn.Dropout(dropout_rate) if use_dropout else nn.Identity(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(True),
-            nn.Dropout(dropout_rate) if use_dropout else nn.Identity(),
-            nn.Linear(4096, num_classes)
+            nn.Linear(512, num_classes)
         )
 
     def forward(self, x):
