@@ -89,7 +89,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     
     writer = SummaryWriter(log_dir=os.path.join(output_model_folder, "tensorboard"))
 
-    logging.info(f"Starting training {id} using {model_name} model, max epochs {max_epochs}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_features}, unfreeze last n layers {unfreeze_last_n_layers}.")
+    logging.info(f"Starting training {id} using {model_name} model, max epochs {max_epochs}, batch size {batch_size}, img size {img_size}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_features}, unfreeze last n layers {unfreeze_last_n_layers}.")
 
     transform_list = [transforms.Resize((img_size, img_size))]
     if use_data_augmentation:
