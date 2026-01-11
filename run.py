@@ -41,7 +41,7 @@ def main():
     #     experiments = json.load(f)
     
     with open(EXPERIMENTS_PART2_FILE) as f:
-        experiments += json.load(f)
+        experiments = json.load(f)
 
     for exp in experiments:
         run_experiment(exp)
