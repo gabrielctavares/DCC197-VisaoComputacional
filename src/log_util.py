@@ -33,6 +33,26 @@ def display_class_distribution(type, dataset, emotion_table):
 
     logging.info(f"{type} dataset size: {total}\n")
 
+def log_trainable_parameters(model):
+    total_params = 0
+    trainable_params = 0
+
+    logging.info("\n===== Camadas treinaveis =====")
+
+    for name, param in model.named_parameters():
+        numel = param.numel()
+        total_params += numel
+
+        status = "TREINÁVEL" if param.requires_grad else "CONGELADO"
+        if param.requires_grad:
+            trainable_params += numel
+
+        logging.info(f"{status:10s} | {name:50s} | shape={tuple(param.shape)}")
+
+    logging.info(f"Total parâmetros     : {total_params:,}")
+    logging.info(f"Parâmetros treináveis : {trainable_params:,}")
+    logging.info("======================================\n")
+    
 
 def plot_confusion_matrix(cm, class_names, title="Matriz de Confusão", save_path=None):
     """Gera e retorna um gráfico Matplotlib a partir de uma matriz de confusão já calculada."""

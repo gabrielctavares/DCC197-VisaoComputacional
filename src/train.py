@@ -20,7 +20,11 @@ from torchvision import datasets, transforms
 
 
 def build_optimizer(model, lr, weight_decay, epochs):
-    trainable_params = filter(lambda p: p.requires_grad, model.parameters())
+    trainable_params = [p for p in model.parameters() if p.requires_grad]
+
+    if len(trainable_params) == 0:
+        raise RuntimeError("Nenhum parâmetro treinável encontrado para o otimizador.")
+
     optimizer = optim.SGD(
         trainable_params,
         lr=lr,
@@ -204,8 +208,17 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
         "id": id,
         "modelo": model_name,
         "test_acc": final_test_acc,
-        **{f"test_{class_names[i]}": test_class_accs[i] for i in class_names},
-        "batch_size": batch_size
+        **{f"test_{class_name}": test_class_accs[i] for i, class_name in enumerate(class_names)},
+        "batch_size": batch_size,
+        "img_size": img_size,
+        "learning_rate": learning_rate,
+        "weight_decay": weight_decay,
+        "use_dropout": use_dropout,
+        "dropout_rate": dropout_rate,
+        "use_batch_norm": use_batch_norm,
+        "use_data_augmentation": use_data_augmentation,
+        "freeze_features": freeze_features,
+        "unfreeze_last_n_layers": unfreeze_last_n_layers        
     }   
     save_results_to_excel(results_file, final_row)
 
@@ -226,7 +239,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default='VGG16')
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--img_size", type=int, default=224)
+    parser.add_argument("--img_size", type=int, default=64)
 
     parser.add_argument("--learning_rate", type=float, default=1e-4)
     parser.add_argument("--weight_decay", type=float, default=1e-4)

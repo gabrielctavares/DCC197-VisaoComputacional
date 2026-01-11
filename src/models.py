@@ -1,6 +1,9 @@
+import logging
+import torch
 import torch.nn as nn
 
 from torchvision import models
+from log_util import log_trainable_parameters
 
 
 def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_dropout, dropout_rate, freeze_features, unfreeze_last_n_layers):
@@ -29,7 +32,7 @@ def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_d
     else:
         raise ValueError("Modelo não suportado")
 
-    if freeze_features and unfreeze_last_n_layers:
+    if freeze_features and unfreeze_last_n_layers and feature_params is not None:
         feature_params = list(feature_params)
         layers_n = min(unfreeze_last_n_layers, len(feature_params))
         for param in feature_params:
@@ -38,8 +41,12 @@ def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_d
         for param in feature_params[-layers_n:]:
           param.requires_grad = True
 
-    print(model)
+    logging.info(model)
+
+    log_trainable_parameters(model)
+
     return model.to(device)
+
 
 
 class VGG16(nn.Module):
@@ -60,32 +67,31 @@ class VGG16(nn.Module):
                 in_channels = out_channels
 
             layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
-            return nn.Sequential(*layers)
+            return layers
 
         self.features = nn.Sequential(
-            conv_block(3, 64, 2),
-            conv_block(64, 128, 2),
-            conv_block(128, 256, 3),
-            conv_block(256, 512, 3),
-            conv_block(512, 512, 3)
+            *conv_block(3, 64, 2),
+            *conv_block(64, 128, 2),
+            *conv_block(128, 256, 3),
+            *conv_block(256, 512, 3),
+            *conv_block(512, 512, 3)
         )
-
-        feat_size = img_size // 32
-        self.avgpool = nn.AdaptiveAvgPool2d((feat_size, feat_size))
-        
-        in_features = 512 * feat_size * feat_size
-
+        in_features = 512 * 7 * 7
+        self.avgpool = nn.AdaptiveAvgPool2d((7, 7))        
         self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(in_features, 512),
+            nn.Linear(in_features, 4096),            
+            nn.ReLU(True),            
+            nn.Dropout(dropout_rate) if use_dropout else nn.Identity(),
+            nn.Linear(4096, 4096),
             nn.ReLU(True),
             nn.Dropout(dropout_rate) if use_dropout else nn.Identity(),
-            nn.Linear(512, num_classes)
+            nn.Linear(4096, num_classes)
         )
 
     def forward(self, x):
         x = self.features(x)
         x = self.avgpool(x)
+        x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
 
