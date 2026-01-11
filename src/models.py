@@ -6,7 +6,7 @@ from torchvision import models
 from log_util import log_trainable_parameters
 
 
-def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_dropout, dropout_rate, freeze_features, unfreeze_last_n_layers):
+def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_dropout, dropout_rate, freeze_backbone, unfreeze_last_n_params):
     feature_params = None
 
     model_name = model_name.lower()
@@ -21,7 +21,10 @@ def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_d
         model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
         model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-        feature_params = model.parameters()
+        feature_params = (
+            p for name, p in model.named_parameters()
+            if not name.startswith("fc.")
+        )        
 
     elif model_name == "densenet121":
         model = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
@@ -32,14 +35,16 @@ def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_d
     else:
         raise ValueError("Modelo não suportado")
 
-    if freeze_features and unfreeze_last_n_layers and feature_params is not None:
+    if freeze_backbone and feature_params is not None:
         feature_params = list(feature_params)
-        layers_n = min(unfreeze_last_n_layers, len(feature_params))
         for param in feature_params:
           param.requires_grad = False
-    
-        for param in feature_params[-layers_n:]:
-          param.requires_grad = True
+        
+        if unfreeze_last_n_params is not None and unfreeze_last_n_params > 0:
+            layers_n = min(unfreeze_last_n_params, len(feature_params))
+            for param in feature_params[-layers_n:]:
+                param.requires_grad = True
+
 
     logging.info(model)
 

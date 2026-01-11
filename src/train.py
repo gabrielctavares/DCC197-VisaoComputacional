@@ -25,10 +25,9 @@ def build_optimizer(model, lr, weight_decay, epochs):
     if len(trainable_params) == 0:
         raise RuntimeError("Nenhum parâmetro treinável encontrado para o otimizador.")
 
-    optimizer = optim.SGD(
+    optimizer = optim.Adam(
         trainable_params,
-        lr=lr,
-        momentum=0.9,
+        lr=lr,                
         weight_decay=weight_decay
     )
 
@@ -75,7 +74,7 @@ def validate(model, dataloader, device, class_names):
     return acc, class_accs, cm
 
 
-def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight_decay, use_dropout, dropout_rate, use_batch_norm, use_data_augmentation, freeze_features, unfreeze_last_n_layers, results_file="resultados.xlsx"):
+def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight_decay, use_dropout, dropout_rate, use_batch_norm, use_data_augmentation, freeze_backbone, unfreeze_last_n_params, results_file="resultados.xlsx"):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     is_cuda = device.type == 'cuda'
     num_workers=4
@@ -93,7 +92,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     
     writer = SummaryWriter(log_dir=os.path.join(output_model_folder, "tensorboard"))
 
-    logging.info(f"Starting training {id} using {model_name} model, max epochs {max_epochs}, batch size {batch_size}, img size {img_size}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_features}, unfreeze last n layers {unfreeze_last_n_layers}.")
+    logging.info(f"Starting training {id} using {model_name} model, max epochs {max_epochs}, batch size {batch_size}, img size {img_size}, learning rate {learning_rate}, weight decay {weight_decay}, use dropout {use_dropout}, dropout rate {dropout_rate}, use batch norm {use_batch_norm}, use data augmentation {use_data_augmentation}, freeze features {freeze_backbone}, unfreeze last n layers {unfreeze_last_n_params}.")
 
     transform_list = [transforms.Resize((img_size, img_size))]
     if use_data_augmentation:
@@ -153,7 +152,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     )
     class_names = train_dataset.classes
 
-    model = build_model(model_name, len(class_names), device=device, img_size=img_size, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_features=freeze_features, unfreeze_last_n_layers=unfreeze_last_n_layers)
+    model = build_model(model_name, len(class_names), device=device, img_size=img_size, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_backbone=freeze_backbone, unfreeze_last_n_params=unfreeze_last_n_params)
 
     display_class_distribution("Train", train_dataset, class_names)
     display_class_distribution("Test", test_dataset, class_names)
@@ -217,8 +216,8 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
         "dropout_rate": dropout_rate,
         "use_batch_norm": use_batch_norm,
         "use_data_augmentation": use_data_augmentation,
-        "freeze_features": freeze_features,
-        "unfreeze_last_n_layers": unfreeze_last_n_layers        
+        "freeze_backbone": freeze_backbone,
+        "unfreeze_last_n_params": unfreeze_last_n_params        
     }   
     save_results_to_excel(results_file, final_row)
 
@@ -249,8 +248,8 @@ if __name__ == "__main__":
     parser.add_argument("--use_batch_norm", type=bool, default=False)
 
     parser.add_argument("--use_data_augmentation", type=bool, default=False)
-    parser.add_argument("--freeze_features", type=bool, default=False)
-    parser.add_argument("--unfreeze_last_n_layers", type=int, default=0)
+    parser.add_argument("--freeze_backbone", type=bool, default=False)
+    parser.add_argument("--unfreeze_last_n_params", type=int, default=0)
 
     parser.add_argument("-r", "--results_file", type=str, default=f"resultados_{datetime.now().strftime('%Y%m%d')}.xlsx")
     args = parser.parse_args()
@@ -258,7 +257,7 @@ if __name__ == "__main__":
          args.img_size, 
          args.learning_rate, args.weight_decay,
          args.use_dropout, args.dropout_rate, args.use_batch_norm,
-         args.use_data_augmentation, args.freeze_features, args.unfreeze_last_n_layers,         
+         args.use_data_augmentation, args.freeze_backbone, args.unfreeze_last_n_params,         
          args.results_file)
 
 

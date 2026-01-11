@@ -28,9 +28,9 @@ def run_experiment(exp):
     if exp.get("use_data_augmentation", False):
         cmd += ["--use_data_augmentation", "True"]
 
-    if exp.get("freeze_features", False):
-        cmd += ["--freeze_features", "True"]
-        cmd += ["--unfreeze_last_n_layers", str(exp.get("unfreeze_last_n_layers", 0))]
+    if exp.get("freeze_backbone", False):
+        cmd += ["--freeze_backbone", "True"]
+        cmd += ["--unfreeze_last_n_params", str(exp.get("unfreeze_last_n_params", 0))]
 
     print("\n▶ Executando experimento:", exp["id"])
     subprocess.run(cmd, check=True)
