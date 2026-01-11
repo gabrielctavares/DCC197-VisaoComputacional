@@ -2,7 +2,7 @@ import json
 import subprocess
 from datetime import datetime
 
-EXPERIMENTS_PART1_FILE = "experiments/experiments_part1.json"
+#EXPERIMENTS_PART1_FILE = "experiments/experiments_part1.json"
 EXPERIMENTS_PART2_FILE = "experiments/experiments_part2.json"
 
 def run_experiment(exp):
@@ -37,8 +37,8 @@ def run_experiment(exp):
 
 
 def main():
-    with open(EXPERIMENTS_PART1_FILE) as f:
-        experiments = json.load(f)
+    # with open(EXPERIMENTS_PART1_FILE) as f:
+    #     experiments = json.load(f)
     
     with open(EXPERIMENTS_PART2_FILE) as f:
         experiments += json.load(f)
