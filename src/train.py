@@ -104,8 +104,8 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     transform_list += [
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
+            mean=[0.4914, 0.4822, 0.4465],
+            std=[0.2470, 0.2435, 0.2616]
         )
     ]
     transform_train = transforms.Compose(transform_list)
@@ -115,8 +115,8 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
         transforms.Resize((img_size, img_size)),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
+            mean=[0.4914, 0.4822, 0.4465],
+            std=[0.2470, 0.2435, 0.2616]
         )
     ])
 
