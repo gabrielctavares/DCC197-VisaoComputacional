@@ -6,12 +6,12 @@ from torchvision import models
 from log_util import log_trainable_parameters
 
 
-def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_dropout, dropout_rate, freeze_backbone, unfreeze_last_n_params):
+def build_model(model_name, num_classes, device,  use_batch_norm, use_dropout, dropout_rate, freeze_backbone, unfreeze_last_n_params):
     feature_params = None
 
     model_name = model_name.lower()
     if model_name == "vgg16":
-        model = VGG16(num_classes, img_size, use_batch_norm, use_dropout, dropout_rate)
+        model = VGG16(num_classes, use_batch_norm, use_dropout, dropout_rate)
     elif model_name == "vgg16_pretreinada":
         model = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)        
         model.classifier[6] = nn.Linear(4096, num_classes)
@@ -55,7 +55,7 @@ def build_model(model_name, num_classes, device, img_size, use_batch_norm, use_d
 
 
 class VGG16(nn.Module):
-    def __init__(self, num_classes=10, img_size=32, use_batch_norm=False, use_dropout=False, dropout_rate=0.5):
+    def __init__(self, num_classes=10, use_batch_norm=False, use_dropout=False, dropout_rate=0.5):
         use_batch_norm = use_batch_norm
         use_dropout = use_dropout
         dropout_rate = dropout_rate
@@ -84,6 +84,7 @@ class VGG16(nn.Module):
         in_features = 512 * 7 * 7
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))        
         self.classifier = nn.Sequential(
+            nn.Flatten(),
             nn.Linear(in_features, 4096),            
             nn.ReLU(True),            
             nn.Dropout(dropout_rate) if use_dropout else nn.Identity(),
@@ -96,7 +97,6 @@ class VGG16(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = self.avgpool(x)
-        x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
 

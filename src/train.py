@@ -152,7 +152,7 @@ def main(id, model_name, max_epochs, batch_size, img_size, learning_rate, weight
     )
     class_names = train_dataset.classes
 
-    model = build_model(model_name, len(class_names), device=device, img_size=img_size, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_backbone=freeze_backbone, unfreeze_last_n_params=unfreeze_last_n_params)
+    model = build_model(model_name, len(class_names), device=device, use_dropout=use_dropout, dropout_rate=dropout_rate, use_batch_norm=use_batch_norm, freeze_backbone=freeze_backbone, unfreeze_last_n_params=unfreeze_last_n_params)
 
     display_class_distribution("Train", train_dataset, class_names)
     display_class_distribution("Test", test_dataset, class_names)
