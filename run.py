@@ -41,7 +41,9 @@ def run_experiment(exp):
 
 
 def main():
-    run_output = "./run_outputs"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    run_output = os.path.join(BASE_DIR, "run_outputs")
+    os.makedirs(run_output, exist_ok=True)
     
     logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(asctime)s - %(message)s', handlers=[
         logging.FileHandler(os.path.join(run_output, f"experiment{datetime.now().strftime('%Y%m%d')}.log")),
