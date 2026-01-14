@@ -1,9 +1,10 @@
 import json
+import logging
+import os
 import subprocess
 from datetime import datetime
 
-EXPERIMENTS_PART1_FILE = "experiments/experiments_part1.json"
-EXPERIMENTS_PART2_FILE = "experiments/experiments_part2.json"
+EXPERIMENTS_FOLDER = "./experiments/"
 
 def run_experiment(exp):
     cmd = [
@@ -32,19 +33,35 @@ def run_experiment(exp):
         cmd += ["--freeze_backbone", "True"]
         cmd += ["--unfreeze_last_n_params", str(exp.get("unfreeze_last_n_params", 0))]
 
-    print("\n▶ Executando experimento:", exp["id"])
-    subprocess.run(cmd, check=True)
+    logging.info("\n▶ Executando experimento: %s", exp["id"])
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        logging.error("Erro ao executar experimento %s: %s", exp["id"], e)
 
 
 def main():
-    with open(EXPERIMENTS_PART1_FILE) as f:
-        experiments = json.load(f)
+    run_output = "./run_outputs"
     
-    with open(EXPERIMENTS_PART2_FILE) as f:
-        experiments += json.load(f)
-
-    for exp in experiments:
-        run_experiment(exp)
+    logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(asctime)s - %(message)s', handlers=[
+        logging.FileHandler(os.path.join(run_output, f"experiment{datetime.now().strftime('%Y%m%d')}.log")),
+        logging.StreamHandler()
+    ])
+      
+    if not os.path.exists(EXPERIMENTS_FOLDER):
+        logging.error(f"Pasta de experimentos '{EXPERIMENTS_FOLDER}' não encontrada.")
+        return
+    experiments_files = [f for f in os.listdir(EXPERIMENTS_FOLDER) if f.endswith('.json')]
+    
+    if not experiments_files:
+        logging.error(f"Nenhum arquivo de experimento encontrado na pasta '{EXPERIMENTS_FOLDER}'.")
+        return
+    
+    for exp_file in experiments_files:
+        exp_path = os.path.join(EXPERIMENTS_FOLDER, exp_file)
+        with open(exp_path, 'r') as f:
+            exp = json.load(f)
+            run_experiment(exp)
 
 
 if __name__ == "__main__":
