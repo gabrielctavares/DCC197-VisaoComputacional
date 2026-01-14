@@ -61,8 +61,15 @@ def main():
     
     for exp_file in experiments_files:
         exp_path = os.path.join(EXPERIMENTS_FOLDER, exp_file)
+        
         with open(exp_path, 'r') as f:
-            exp = json.load(f)
+            experiments = json.load(f)
+
+        if not isinstance(experiments, list):
+            logging.error(f"{exp_file} não contém uma lista de experimentos.")
+            return
+        
+        for exp in experiments:
             run_experiment(exp)
 
 
