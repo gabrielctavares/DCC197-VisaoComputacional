@@ -33,7 +33,7 @@ def run_experiment(exp):
         cmd += ["--freeze_backbone", "True"]
         cmd += ["--unfreeze_last_n_params", str(exp.get("unfreeze_last_n_params", 0))]
 
-    logging.info("\n▶ Executando experimento: %s", exp["id"])
+    logging.info("Executando experimento: %s", exp["id"])
     try:
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
