@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import os
@@ -40,7 +41,7 @@ def run_experiment(exp):
         logging.error("Erro ao executar experimento %s: %s", exp["id"], e)
 
 
-def main():
+def main(id_filter: str = ""):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     run_output = os.path.join(BASE_DIR, "run_outputs")
     os.makedirs(run_output, exist_ok=True)
@@ -69,9 +70,14 @@ def main():
             logging.error(f"{exp_file} não contém uma lista de experimentos.")
             return
         
+        experiments = [exp for exp in experiments if not id_filter or id_filter == exp["id"]]
         for exp in experiments:
+            
             run_experiment(exp)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()    
+    parser.add_argument("--id", type=str, default="")
+    args = parser.parse_args()    
+    main(args.id)
