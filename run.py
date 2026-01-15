@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 from datetime import datetime
+from unittest import result
 
 EXPERIMENTS_FOLDER = "./experiments/"
 
@@ -36,7 +37,10 @@ def run_experiment(exp):
 
     logging.info("Executando experimento: %s", exp["id"])
     try:
-        subprocess.run(cmd, check=True)
+        result = subprocess.run(cmd)
+        if result.returncode != 0:
+            logging.error("Processo %s terminou com código %s", exp["id"], result.returncode)            
+        
     except subprocess.CalledProcessError as e:
         logging.error("Erro ao executar experimento %s: %s", exp["id"], e)
 
