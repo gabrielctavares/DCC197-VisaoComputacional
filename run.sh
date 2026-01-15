@@ -70,7 +70,7 @@ for FILE in $EXPERIMENT_FILES; do
     UNFREEZE_N=$(jq -r ".[$i].unfreeze_last_n_params // 0" "$FILE")
 
     CMD=(
-      python src/train.py
+      python -u src/train.py
       --id "$EXP_ID"
       --model_name "$MODEL_NAME"
       --epochs "$EPOCHS"
@@ -89,7 +89,7 @@ for FILE in $EXPERIMENT_FILES; do
     echo "[INFO] $(date) - Executando experimento $EXP_ID" | tee -a "$LOG_FILE"
     echo "[CMD] ${CMD[*]}" | tee -a "$LOG_FILE"
 
-    "${CMD[@]}" >> "$LOG_FILE" 2>&1
+    "${CMD[@]}"
     STATUS=$?
 
     if [[ $STATUS -ne 0 ]]; then
