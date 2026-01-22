@@ -89,18 +89,18 @@ python src/train.py \
 |-----------|------|--------|-----------|
 | `--id` | str | Obrigatório | Identificador do experimento |
 | `--model_name` | str | Obrigatório | Nome do modelo (vgg16, vgg16_pretreinada, resnet50, densenet121) |
-| `--epochs` | int | Obrigatório | Número de épocas |
-| `--batch_size` | int | Obrigatório | Tamanho do batch |
-| `--img_size` | int | Obrigatório | Tamanho das imagens |
-| `--learning_rate` | float | Obrigatório | Taxa de aprendizado |
-| `--weight_decay` | float | Obrigatório | L2 regularization |
+| `--epochs` | int | 100 | Número de épocas |
+| `--batch_size` | int | 32 | Tamanho do batch |
+| `--img_size` | int | 64 | Tamanho das imagens |
+| `--learning_rate` | float | 1e-4 (0.0001) | Taxa de aprendizado |
+| `--weight_decay` | float | 1e-4 (0.0001) | L2 regularization |
 | `--use_dropout` | bool | false | Usar dropout |
 | `--dropout_rate` | float | 0.5 | Taxa de dropout |
 | `--use_batch_norm` | bool | false | Usar Batch Normalization |
 | `--use_data_augmentation` | bool | false | Aplicar data augmentation |
 | `--freeze_backbone` | bool | false | Congelar pesos da backbone |
 | `--unfreeze_last_n_params` | int | 0 | Número de parâmetros para descongelar |
-| `--results_file` | str | resultados.xlsx | Arquivo para salvar resultados |
+| `--results_file` | str | resultados_YYYYMMDD.xlsx | Arquivo para salvar resultados |
 
 ### 2. Executar múltiplos experimentos em batch
 
