@@ -32,7 +32,7 @@ Este projeto implementa e compara diferentes modelos de visão computacional par
 
 1. Clone ou baixe o projeto:
 ```bash
-clone https://github.com/gabrielctavares/DCC197-VisaoComputacional.git
+git clone https://github.com/gabrielctavares/DCC197-VisaoComputacional.git
 cd ./DCC197-VisaoComputacional
 ```
 
