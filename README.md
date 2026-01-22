@@ -201,17 +201,17 @@ Após o treinamento, você encontrará:
 
 ## Arquitetura dos Modelos
 
-### VGG16 (Customizado)
+### VGG16 (Implementado)
 Rede convolucional clássica com dropout e batch normalization opcionais.
 
-### VGG16 Pré-treinada
-VGG16 com pesos do ImageNet, com último layer ajustado para 10 classes do CIFAR-10.
+### VGG16 (Transfer Learning)
+VGG16 pré-treinada com pesos do ImageNet, com possibilidade de congelamento da backbone e último layer ajustado para 10 classes do CIFAR-10.
 
 ### ResNet50 (Transfer Learning)
-ResNet50 pré-treinada com possibilidade de congelamento da backbone e fine-tuning.
+ResNet50 pré-treinada com pesos do ImageNet, com possibilidade de congelamento da backbone e último layer ajustado para 10 classes do CIFAR-10.
 
 ### DenseNet121 (Transfer Learning)
-DenseNet121 pré-treinada com dense connections para melhor fluxo de gradientes.
+DenseNet121 pré-treinada com pesos do imagenet, com possibilidade de congelamento do backbone e último layer ajustado para 10 classes do CIFAR-10.
 
 ## Configuração de GPU
 
